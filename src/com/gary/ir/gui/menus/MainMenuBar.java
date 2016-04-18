@@ -22,20 +22,24 @@
  * THE SOFTWARE.
  */
 
-package com.gary.ir.query;
+package com.gary.ir.gui.menus;
 
-import com.gary.ir.index.Index;
+import com.gary.ir.gui.index.listeners.NewIndexListenerI;
+import javax.swing.JMenuBar;
 
 /**
  *
  * @author Gary Munnelly
  */
-public abstract class Ranker {
-    private Index index;
+public class MainMenuBar extends JMenuBar {
+    private FileMenu filemenu;
     
-    public void setIndex(Index index) {
-        this.index = index;
+    public MainMenuBar() {
+        this.filemenu = new FileMenu();        
+        this.add(filemenu);
     }
     
-    public abstract String[] executeQuery(String query);
+    public void addNewIndexListener(NewIndexListenerI newIndexListener) {
+        this.filemenu.addNewIndexListener(newIndexListener);
+    }
 }

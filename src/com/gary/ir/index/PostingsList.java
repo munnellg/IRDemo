@@ -24,6 +24,7 @@
 
 package com.gary.ir.index;
 
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.TreeMap;
 
@@ -44,6 +45,14 @@ public class PostingsList {
     
     public int getFrequency() {
         return this.frequency;
+    }
+    
+    public int getNumPostings() {
+        return this.postings.keySet().size();
+    }
+    
+    public Collection<Posting> getPostings() {
+        return this.postings.values();
     }
     
     public void addPosting(Posting posting) {

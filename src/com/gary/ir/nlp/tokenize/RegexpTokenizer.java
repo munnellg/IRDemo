@@ -27,6 +27,7 @@ package com.gary.ir.nlp.tokenize;
 import java.util.LinkedList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 /**
  *
@@ -47,6 +48,25 @@ public class RegexpTokenizer extends Tokenizer {
         this.pattern = pattern;
     }
     
+    public void setRegexpString(String pattern) {
+        try {
+            Pattern temp = Pattern.compile(pattern);
+            this.pattern = temp;
+        }
+        catch (PatternSyntaxException e) {
+            System.out.println(e.getMessage());
+        }       
+    }
+    
+    public String getRegexpString() {
+        return this.pattern.toString();
+    }
+    
+    @Override
+    public String toString() {
+        return "Regular Expression Tokenizer";
+    }
+    
     @Override
     public String[] tokenize(String text) {
         Matcher m = this.pattern.matcher(text);
@@ -61,5 +81,5 @@ public class RegexpTokenizer extends Tokenizer {
         
         // Convert the linked list to an array
         return l.toArray(new String[0]);
-    }    
+    }
 }

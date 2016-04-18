@@ -22,15 +22,12 @@
  * THE SOFTWARE.
  */
 
-package com.gary.ir.query;
+package com.gary.ir.gui.index.listeners;
 
 /**
  *
  * @author Gary Munnelly
  */
-public class TermFreqRank extends Ranker {
-    
-    public String [] executeQuery(String query) {
-        return null;
-    }
+public interface NewIndexListenerI {
+    public void newIndex();
 }

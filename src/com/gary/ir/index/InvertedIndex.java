@@ -24,6 +24,7 @@
 
 package com.gary.ir.index;
 
+import com.gary.ir.nlp.stemmer.Stemmer;
 import com.gary.ir.nlp.tokenize.RegexpTokenizer;
 import com.gary.ir.nlp.tokenize.Tokenizer;
 import java.io.File;
@@ -35,16 +36,26 @@ import java.util.TreeMap;
  *
  * @author Gary Munnelly
  */
-public class Index {
+public class InvertedIndex {
 
     private Tokenizer tokenizer;
-    TreeMap <String, PostingsList> index;
-    TreeMap <String, Integer> doc_index;
+    private Stemmer stemmer;
+    private TreeMap <String, PostingsList> index;
+    private TreeMap <String, Integer> doc_index;
     
-    public Index() {
+    public InvertedIndex() {
         this.index = new TreeMap<>();
         this.doc_index = new TreeMap<>();
         this.tokenizer = new RegexpTokenizer();
+        this.stemmer = null;
+    }
+    
+    public String [] getIndexedTerms() {
+        return this.index.keySet().toArray(new String[0]);
+    }
+    
+    public PostingsList getTermPostingsList( String term ) {
+        return this.index.get(term);
     }
     
     public void indexFile(File f) {
@@ -75,12 +86,23 @@ public class Index {
         this.doc_index.put(f.getAbsolutePath(), tokens.length);
     }
 
+    public Tokenizer getTokenizer() {
+        return this.tokenizer;
+    }
+    
+    public void setStemmer(Stemmer stemmer) {
+        this.stemmer = stemmer;
+    }
+    
+    public Stemmer getStemmer() {
+        return this.stemmer;
+    }
+    
     public void setTokenizer(Tokenizer tokenizer) {
         this.tokenizer = tokenizer;
     }    
         
-    public LinkedList<Posting> getTermPostings( String query ) {
-        
+    public LinkedList<Posting> getTermPostings( String query ) {        
         return null;
     }
     

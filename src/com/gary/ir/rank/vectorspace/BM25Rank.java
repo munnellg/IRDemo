@@ -22,7 +22,8 @@
  * THE SOFTWARE.
  */
 
-package com.gary.ir.query;
+package com.gary.ir.rank.vectorspace;
+import com.gary.ir.rank.Ranker;
 
 /**
  *

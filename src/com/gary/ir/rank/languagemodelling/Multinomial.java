@@ -22,17 +22,12 @@
  * THE SOFTWARE.
  */
 
-package com.gary.ir.query;
+package com.gary.ir.rank.languagemodelling;
 
 /**
  *
  * @author Gary Munnelly
  */
-public class TfIdfRank extends Ranker {
-
-    @Override
-    public String[] executeQuery(String query) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+public class Multinomial {
     
 }

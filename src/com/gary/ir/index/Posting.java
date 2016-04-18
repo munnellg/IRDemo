@@ -58,6 +58,10 @@ public class Posting {
         this.doc_id = doc_id;
     }
     
+    public LinkedList<Integer> getReferences() {
+        return this.references;
+    }
+    
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();

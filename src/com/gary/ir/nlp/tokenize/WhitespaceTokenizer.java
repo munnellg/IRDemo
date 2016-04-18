@@ -40,4 +40,8 @@ public class WhitespaceTokenizer extends Tokenizer {
         return text.split("\\s");
     }
     
+    @Override
+    public String toString() {
+        return "Whitespace Tokenizer";
+    }
 }

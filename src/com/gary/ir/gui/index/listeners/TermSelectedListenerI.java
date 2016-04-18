@@ -22,51 +22,12 @@
  * THE SOFTWARE.
  */
 
-package com.gary.ir;
-
-import com.gary.ir.gui.MainWindow;
-import com.gary.ir.index.InvertedIndex;
-import java.io.File;
-import java.io.IOException;
-import java.util.Scanner;
-import javax.swing.SwingUtilities;
-
+package com.gary.ir.gui.index.listeners;
 
 /**
  *
  * @author Gary Munnelly
  */
-public class IR {
-    private static final InvertedIndex index = new InvertedIndex();
-    
-    public static void indexFiles( String path ) {
-
-        File root = new File( path );
-        File[] list = root.listFiles();
-                
-        if (list == null){
-            return;
-        }
-
-        for ( File f : list ) {
-            if ( f.isDirectory() ) {
-                indexFiles( f.getAbsolutePath() );
-            }
-            else {
-                index.indexFile(f);
-            }
-        }
-    }
-    
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                MainWindow w = new MainWindow();
-            }
-        });
-    }    
+public interface TermSelectedListenerI {
+    public void termSelected( String term );
 }

@@ -22,51 +22,20 @@
  * THE SOFTWARE.
  */
 
-package com.gary.ir;
+package com.gary.ir.rank;
 
-import com.gary.ir.gui.MainWindow;
 import com.gary.ir.index.InvertedIndex;
-import java.io.File;
-import java.io.IOException;
-import java.util.Scanner;
-import javax.swing.SwingUtilities;
-
 
 /**
  *
  * @author Gary Munnelly
  */
-public class IR {
-    private static final InvertedIndex index = new InvertedIndex();
+public abstract class Ranker {
+    private InvertedIndex index;
     
-    public static void indexFiles( String path ) {
-
-        File root = new File( path );
-        File[] list = root.listFiles();
-                
-        if (list == null){
-            return;
-        }
-
-        for ( File f : list ) {
-            if ( f.isDirectory() ) {
-                indexFiles( f.getAbsolutePath() );
-            }
-            else {
-                index.indexFile(f);
-            }
-        }
+    public void setIndex(InvertedIndex index) {
+        this.index = index;
     }
     
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                MainWindow w = new MainWindow();
-            }
-        });
-    }    
+    public abstract String[] executeQuery(String query);
 }
