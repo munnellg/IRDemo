@@ -24,22 +24,17 @@
 
 package com.gary.ir.gui.indexViewers;
 
-import com.gary.ir.gui.index.listeners.TermSelectedListenerI;
 import com.gary.ir.index.InvertedIndex;
 import com.gary.ir.index.Posting;
 import com.gary.ir.index.PostingsList;
 import java.awt.BorderLayout;
 import java.nio.file.Paths;
 import java.util.Collection;
-import java.util.LinkedList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.MutableTreeNode;
-import javax.swing.tree.TreeModel;
-import javax.swing.tree.TreeNode;
 
 /**
  *
@@ -92,7 +87,7 @@ public class IndexTermViewPanel extends JPanel {
             DefaultTreeModel model = (DefaultTreeModel)this.tree.getModel();
             DefaultMutableTreeNode root = new DefaultMutableTreeNode(this.selectedTerm);
             for(Posting posting : postings) {
-                DefaultMutableTreeNode  node = new DefaultMutableTreeNode(Paths.get(posting.getDocId()).getFileName().toString());
+                DefaultMutableTreeNode  node = new DefaultMutableTreeNode(posting.getDocId());
                 for(int i : posting.getReferences()) {
                     DefaultMutableTreeNode pos = new DefaultMutableTreeNode(i);
                     node.add(pos);

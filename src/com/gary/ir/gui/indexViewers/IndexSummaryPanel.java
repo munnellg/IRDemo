@@ -128,14 +128,16 @@ public class IndexSummaryPanel extends JPanel implements ActionListener {
         this.add(this.stemmerValue, c);
         
         c.gridx=0;
-        c.gridy=4;        
-        c.weightx = 0.5;
-        this.add(this.rebuildIndex, c);
-        
-        c.gridx=1;
-        c.gridy=4;
+        c.gridy=4;    
+        c.gridwidth=2;
         c.weightx = 0.5;
         this.add(this.addDocument, c);
+        
+        c.gridx=0;
+        c.gridy=5;
+        c.gridwidth=2;
+        c.weightx = 0.5;
+        this.add(this.rebuildIndex, c);
         
         this.addDocument.addActionListener(this);
         this.documentsAddedListeners = new LinkedList<>();

@@ -71,7 +71,7 @@ public class MainWindow extends JFrame {
         
         this.indexPanel.addDocumentsAddedListener(new DocumentsAddedListenerI() {
             @Override
-            public void documentsAdded(File[] files) {
+            public void documentsAdded(File[] files) {                
                 processFiles(files);
                 indexPanel.indexUpdated();
             }            

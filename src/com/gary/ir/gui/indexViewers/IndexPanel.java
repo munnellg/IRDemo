@@ -28,9 +28,6 @@ import com.gary.ir.gui.index.listeners.DocumentsAddedListenerI;
 import com.gary.ir.gui.index.listeners.TermSelectedListenerI;
 import com.gary.ir.index.InvertedIndex;
 import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 
