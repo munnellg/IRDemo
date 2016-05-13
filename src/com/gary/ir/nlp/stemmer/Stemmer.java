@@ -29,5 +29,5 @@ package com.gary.ir.nlp.stemmer;
  * @author Gary Munnelly
  */
 public abstract class Stemmer {
-    public abstract String Stem(String s);
+    public abstract String stem(String s);
 }

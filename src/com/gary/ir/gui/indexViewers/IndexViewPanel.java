@@ -25,21 +25,17 @@
 package com.gary.ir.gui.indexViewers;
 
 import com.gary.ir.gui.index.listeners.TermSelectedListenerI;
+import com.gary.ir.index.IndexSingleton;
 import com.gary.ir.index.InvertedIndex;
 import com.gary.ir.index.PostingsList;
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.LinkedList;
-import java.util.Vector;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.JTableHeader;
-import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
 /**
@@ -48,7 +44,6 @@ import javax.swing.table.TableRowSorter;
  */
 class IndexViewPanel extends JPanel implements MouseListener {
     
-    private InvertedIndex index;
     private JTable dataTable;
     private DefaultTableModel dataModel;    
     LinkedList<TermSelectedListenerI> listeners;
@@ -60,12 +55,6 @@ class IndexViewPanel extends JPanel implements MouseListener {
     };
     
     public IndexViewPanel() {
-        this(null);
-    }
-    
-    public IndexViewPanel(InvertedIndex index) {
-        this.index = index;
-        
         this.setLayout(new BorderLayout());
         
         this.dataModel = 
@@ -97,16 +86,12 @@ class IndexViewPanel extends JPanel implements MouseListener {
         renderIndex();
     }
     
-    public void indexUpdated(InvertedIndex index) {
-        this.index = index;
-        indexUpdated();
-    }
-
     private void renderIndex() {
+        InvertedIndex index = IndexSingleton.getIndex();
         this.dataModel.setRowCount(0);
         
-        if( this.index != null ) {           
-            String [] terms = this.index.getIndexedTerms();
+        if( index != null ) {           
+            String [] terms = index.getIndexedTerms();
             Object [] data = new Object[this.tableHeaders.length];
             PostingsList postings;
             

@@ -31,7 +31,11 @@ package com.gary.ir.nlp.stemmer;
 public class PorterStemmer extends Stemmer {
 
     @Override
-    public String Stem(String s) {
+    public String stem(String s) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }    
+    
+    public String toString() {
+        return "Porter Stemmer";
+    }
 }

@@ -26,8 +26,13 @@ package com.gary.ir.gui.indexViewers;
 
 import static com.gary.ir.IR.indexFiles;
 import com.gary.ir.gui.index.listeners.DocumentsAddedListenerI;
+import com.gary.ir.gui.index.listeners.IndexRebuiltListenerI;
+import com.gary.ir.index.IndexSingleton;
 import com.gary.ir.index.InvertedIndex;
+import com.gary.ir.nlp.stemmer.PorterStemmer;
 import com.gary.ir.nlp.stemmer.Stemmer;
+import com.gary.ir.nlp.tokenize.RegexpTokenizer;
+import com.gary.ir.nlp.tokenize.WhitespaceTokenizer;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -36,6 +41,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.LinkedList;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -46,7 +52,6 @@ import javax.swing.JPanel;
  */
 public class IndexSummaryPanel extends JPanel implements ActionListener {
     
-    private InvertedIndex index;
     private final JLabel docCountLabel;
     private final JLabel termCountLabel;
     private final JLabel tokenizerLabel;
@@ -54,20 +59,16 @@ public class IndexSummaryPanel extends JPanel implements ActionListener {
     
     private final JLabel docCountValue;
     private final JLabel termCountValue;
-    private final JLabel tokenizerValue;
-    private final JLabel stemmerValue;
+    private final JComboBox<String> tokenizerValue;
+    private final JComboBox<String> stemmerValue;
     
     private JButton rebuildIndex;
     private JButton addDocument;
         
     private LinkedList<DocumentsAddedListenerI> documentsAddedListeners;
+    private LinkedList<IndexRebuiltListenerI> indexRebuiltListeners;
     
     public IndexSummaryPanel() {
-        this(null);
-    }
-    
-    public IndexSummaryPanel(InvertedIndex index) {
-        this.index = index;
         this.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
         
@@ -76,9 +77,12 @@ public class IndexSummaryPanel extends JPanel implements ActionListener {
         this.tokenizerLabel = new JLabel("Tokenizer");
         this.stemmerLabel = new JLabel("Stemmer");
         this.docCountValue = new JLabel("");
-        this.termCountValue = new JLabel("");
-        this.tokenizerValue = new JLabel("");            
-        this.stemmerValue = new JLabel("");
+        this.termCountValue = new JLabel("");                    
+                
+        String[] tokenizers = new String[] {"Regular Expression Tokenizer", "Whitespace Tokenizer"};
+        String[] stemmers = new String[] {"None", "Porter Stemmer"};
+        this.tokenizerValue = new JComboBox<>(tokenizers);
+        this.stemmerValue = new JComboBox<>(stemmers);
         
         this.rebuildIndex = new JButton("Rebuild Index");
         this.addDocument = new JButton("Add Document");
@@ -140,35 +144,37 @@ public class IndexSummaryPanel extends JPanel implements ActionListener {
         this.add(this.rebuildIndex, c);
         
         this.addDocument.addActionListener(this);
+        this.tokenizerValue.addActionListener(this);
+        this.stemmerValue.addActionListener(this);
+        this.rebuildIndex.addActionListener(this);
         this.documentsAddedListeners = new LinkedList<>();
+        this.indexRebuiltListeners = new LinkedList<>();
     }
-    
+        
     public void indexUpdated() {
         renderIndex();
     }
-    
-    public void indexUpdated(InvertedIndex index) {
-        this.index = index;
-        indexUpdated();
-    }
-    
+        
     private void renderIndex() {
-        if(this.index == null ) {
+        InvertedIndex index = IndexSingleton.getIndex();
+        if(index == null ) {
             this.docCountValue.setText("N/A");
             this.termCountValue.setText("N/A");
-            this.tokenizerValue.setText("N/A");            
-            this.stemmerValue.setText("N/A");
+            this.tokenizerValue.setEnabled(false);
+            this.stemmerValue.setEnabled(false);
             this.rebuildIndex.setEnabled(false);
             this.addDocument.setEnabled(false);
         } else {
+            this.tokenizerValue.setEnabled(true);
             this.docCountValue.setText(String.valueOf(index.getNumDocumentsIndexed()));
-            this.termCountValue.setText(String.valueOf(index.getNumTermsIndexed()));
-            this.tokenizerValue.setText(index.getTokenizer().toString());
-            Stemmer s = this.index.getStemmer();
+            this.termCountValue.setText(String.valueOf(index.getNumTermsIndexed()));            
+            
+            this.tokenizerValue.setSelectedItem(index.getTokenizer().toString());
+            Stemmer s = index.getStemmer();
             if( s == null ) {
-                this.stemmerValue.setText("None");
+                this.stemmerValue.setSelectedItem("None");
             } else {
-                this.stemmerValue.setText(s.toString());
+                this.stemmerValue.setSelectedItem(s.toString());
             }
             this.rebuildIndex.setEnabled(true);
             this.addDocument.setEnabled(true);
@@ -177,6 +183,10 @@ public class IndexSummaryPanel extends JPanel implements ActionListener {
     
     public void addDocumentsAddedListener(DocumentsAddedListenerI listener) {
         this.documentsAddedListeners.add(listener);
+    }
+    
+    public void addIndexRebuiltListener(IndexRebuiltListenerI listener) {
+        this.indexRebuiltListeners.add(listener);
     }
     
     @Override
@@ -197,6 +207,43 @@ public class IndexSummaryPanel extends JPanel implements ActionListener {
                     l.documentsAdded(files);
                 }
             }             
+        } else if(clicked == this.tokenizerValue) {
+            String tokenizer = (String)this.tokenizerValue.getSelectedItem();
+            InvertedIndex index = IndexSingleton.getIndex();
+            
+            switch(tokenizer) {
+                case "Whitespace Tokenizer":
+                    index.setTokenizer(new WhitespaceTokenizer());
+                    break;
+                case "Regular Expression Tokenizer": 
+                    index.setTokenizer(new RegexpTokenizer());
+                    break;
+                default:
+                    System.out.println("ERROR: Invalid Tokenizer value " + tokenizer);
+            }
+            
+            renderIndex();
+        } else if(clicked == this.rebuildIndex) {
+            IndexSingleton.rebuildIndex();
+            for(IndexRebuiltListenerI l : this.indexRebuiltListeners) {
+                l.indexRebuilt();
+            }
+        } else if(clicked == this.stemmerValue) {
+            String stemmer = (String)this.stemmerValue.getSelectedItem();
+            InvertedIndex index = IndexSingleton.getIndex();
+            
+            switch(stemmer) {
+                case "None":
+                    index.setStemmer(null);
+                    break;
+                case "Porter Stemmer": 
+                    index.setStemmer(new PorterStemmer());
+                    break;
+                default:
+                    System.out.println("ERROR: Invalid Stemmer value " + stemmer);
+            }
+            
+            renderIndex();
         }
     }
 }

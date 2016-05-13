@@ -37,7 +37,7 @@ public class WhitespaceTokenizer extends Tokenizer {
     
     @Override
     public String[] tokenize(String text) {
-        return text.split("\\s");
+        return text.split("\\s+");
     }
     
     @Override

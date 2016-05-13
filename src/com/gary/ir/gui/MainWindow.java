@@ -25,10 +25,12 @@
 package com.gary.ir.gui;
 
 import com.gary.ir.gui.index.listeners.DocumentsAddedListenerI;
+import com.gary.ir.gui.index.listeners.IndexRebuiltListenerI;
 import com.gary.ir.gui.index.listeners.NewIndexListenerI;
 import com.gary.ir.gui.index.listeners.TermSelectedListenerI;
 import com.gary.ir.gui.indexViewers.IndexPanel;
 import com.gary.ir.gui.menus.MainMenuBar;
+import com.gary.ir.index.IndexSingleton;
 import com.gary.ir.index.InvertedIndex;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -43,8 +45,6 @@ import javax.swing.JTabbedPane;
  */
 public class MainWindow extends JFrame {
     
-    private InvertedIndex index;
-    
     private final MainMenuBar menubar;
     private final JTabbedPane content;
     private IndexPanel indexPanel;
@@ -54,18 +54,17 @@ public class MainWindow extends JFrame {
         super("IR Demo");
         this.setLayout(new BorderLayout());        
         this.setPreferredSize(new Dimension(1024, 720));
-        this.index = new InvertedIndex();
-        
+                
         this.menubar = new MainMenuBar();        
                 
         this.content = new JTabbedPane();
-        this.indexPanel = new IndexPanel(this.index);
+        this.indexPanel = new IndexPanel();
         
         this.menubar.addNewIndexListener(new NewIndexListenerI() {
             @Override
             public void newIndex() {
-                index = new InvertedIndex();
-                indexPanel.indexUpdated(index);
+                IndexSingleton.newIndex();
+                indexPanel.indexUpdated();
             }
         });
         
@@ -83,6 +82,14 @@ public class MainWindow extends JFrame {
             public void termSelected(String term) {
                 indexPanel.displayTerm(term);
             }            
+        });
+        
+        this.indexPanel.addIndexRebuiltListener(new IndexRebuiltListenerI() {
+
+            @Override
+            public void indexRebuilt() {
+                indexPanel.indexUpdated();
+            }
         });
         
         this.setJMenuBar(this.menubar);
@@ -108,6 +115,7 @@ public class MainWindow extends JFrame {
     }
     
     public void indexFile( File file ) {
+        InvertedIndex index = IndexSingleton.getIndex();
         
         if ( file.isDirectory() ) {
             File[] list = file.listFiles();
@@ -117,7 +125,7 @@ public class MainWindow extends JFrame {
         }
         else {
             this.report.setText("Indexing " + file.getAbsolutePath());            
-            this.index.indexFile(file);
+            index.indexFile(file);
         }
     }
 }

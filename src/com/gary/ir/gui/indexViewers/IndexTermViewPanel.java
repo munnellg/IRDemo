@@ -24,11 +24,11 @@
 
 package com.gary.ir.gui.indexViewers;
 
+import com.gary.ir.index.IndexSingleton;
 import com.gary.ir.index.InvertedIndex;
 import com.gary.ir.index.Posting;
 import com.gary.ir.index.PostingsList;
 import java.awt.BorderLayout;
-import java.nio.file.Paths;
 import java.util.Collection;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -40,19 +40,12 @@ import javax.swing.tree.DefaultTreeModel;
  *
  * @author Gary Munnelly
  */
-public class IndexTermViewPanel extends JPanel {
-    private InvertedIndex index;
+public class IndexTermViewPanel extends JPanel {    
     private JScrollPane contentPane;    
     private JTree tree;
     private String selectedTerm;
     
     public IndexTermViewPanel() {
-        this(null);
-    }
-        
-    public IndexTermViewPanel(InvertedIndex index) {
-        this.index = index;
-        
         this.setLayout(new BorderLayout());
         this.selectedTerm = "";
         DefaultMutableTreeNode top = new DefaultMutableTreeNode(this.selectedTerm);
@@ -63,23 +56,25 @@ public class IndexTermViewPanel extends JPanel {
         
         this.add(this.contentPane, BorderLayout.CENTER);
     }
-    
+            
     public String getSelectedTerm() {
         return this.selectedTerm;
     }
-    
+        
     public void setSelectedTerm( String selectedTerm ) {
         this.selectedTerm = selectedTerm;
         renderIndex();
     }
     
     public void renderIndex() {
+        InvertedIndex index = IndexSingleton.getIndex();
+        
         if( index == null ) {
             return;
         }
         
         PostingsList postingsList = 
-                this.index.getTermPostingsList(this.selectedTerm);
+                index.getTermPostingsList(this.selectedTerm);
         
         if(postingsList != null) {
             Collection<Posting> postings = postingsList.getPostings();
@@ -100,10 +95,5 @@ public class IndexTermViewPanel extends JPanel {
     
     public void indexUpdated() {
         renderIndex();
-    }
-    
-    public void indexUpdated(InvertedIndex index) {
-        this.index = index;
-        indexUpdated();
     }
 }

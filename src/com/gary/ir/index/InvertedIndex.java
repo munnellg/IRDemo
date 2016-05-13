@@ -58,12 +58,29 @@ public class InvertedIndex {
         return this.index.get(term);
     }
     
+    public void rebuild() {
+        TreeMap <String, Integer> documents = doc_index;
+        
+        doc_index = new TreeMap<>();
+        index = new TreeMap<>();
+        
+        for(String fpath : documents.keySet()) {
+            File f = new File(fpath);
+            this.indexFile(f);
+        }
+    }
+    
     public void indexFile(File f) {
         String [] tokens;
         
         try {
             // Tokenize the document into words
             tokens = tokenizer.tokenize(f);
+            if(stemmer != null) {
+                for(int i=0; i<tokens.length; i++){
+                    tokens[i] = this.stemmer.stem(tokens[i]);
+                }
+            }
         } catch (IOException ex) {
             // Don't index the file if it couldn't be found. Just report the
             // error and quit

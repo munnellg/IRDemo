@@ -25,8 +25,8 @@
 package com.gary.ir.gui.indexViewers;
 
 import com.gary.ir.gui.index.listeners.DocumentsAddedListenerI;
+import com.gary.ir.gui.index.listeners.IndexRebuiltListenerI;
 import com.gary.ir.gui.index.listeners.TermSelectedListenerI;
-import com.gary.ir.index.InvertedIndex;
 import java.awt.BorderLayout;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
@@ -41,10 +41,6 @@ public class IndexPanel extends JPanel {
     IndexTermViewPanel termView;
     
     public IndexPanel() {
-        this(null);
-    }
-
-    public IndexPanel(InvertedIndex index) {
         JSplitPane sp = new JSplitPane();        
         JPanel left = new JPanel();
         JPanel right = new JPanel();
@@ -53,9 +49,9 @@ public class IndexPanel extends JPanel {
         left.setLayout(new BorderLayout());
         right.setLayout(new BorderLayout());
         
-        this.summary = new IndexSummaryPanel(index);
-        this.indexView = new IndexViewPanel(index);
-        this.termView = new IndexTermViewPanel(index);
+        this.summary = new IndexSummaryPanel();
+        this.indexView = new IndexViewPanel();
+        this.termView = new IndexTermViewPanel();
                 
         left.add(this.summary, BorderLayout.NORTH);
         left.add(this.termView, BorderLayout.CENTER);
@@ -73,14 +69,12 @@ public class IndexPanel extends JPanel {
         this.termView.indexUpdated();
     }
     
-    public void indexUpdated(InvertedIndex index) {        
-        this.summary.indexUpdated(index);
-        this.indexView.indexUpdated(index);
-        this.termView.indexUpdated(index);
-    }
-    
     public void addDocumentsAddedListener(DocumentsAddedListenerI listener) {
         this.summary.addDocumentsAddedListener(listener);
+    }
+    
+    public void addIndexRebuiltListener(IndexRebuiltListenerI listener) {
+        this.summary.addIndexRebuiltListener(listener);
     }
     
     public void addTermSelectedListener(TermSelectedListenerI termSelectedListenerI) {
